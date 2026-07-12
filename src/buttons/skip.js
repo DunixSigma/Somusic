@@ -1,15 +1,43 @@
-import { logger } from '../logs/logger.js';
+import Logger from '../logs/Logger.js';
 
-const button = {
-  customId: 'music_skip',
-  async execute(interaction) {
+const logger = new Logger('SkipButton');
+
+export default {
+  id: 'btn_skip',
+  async execute(interaction, client) {
     try {
-      await interaction.reply({ content: 'Skip pressionado', ephemeral: true });
-      logger.music('Button: Skip');
+      await interaction.deferReply({ ephemeral: true });
+
+      const member = interaction.guild.members.cache.get(interaction.user.id);
+
+      if (!member.voice.channel) {
+        return await interaction.editReply({
+          embeds: [{
+            color: 0xff0000,
+            title: '❌ Error',
+            description: 'You must be in a voice channel'
+          }]
+        });
+      }
+
+      logger.info(`Skip button pressed by ${interaction.user.username}`);
+
+      await interaction.editReply({
+        embeds: [{
+          color: 0x00ff00,
+          title: '⏭️ Skipped',
+          description: 'Skipped to next song'
+        }]
+      });
     } catch (error) {
-      logger.error('Erro em button skip:', error);
+      logger.error(`Error in skip button: ${error.message}`);
+      await interaction.editReply({
+        embeds: [{
+          color: 0xff0000,
+          title: '❌ Error',
+          description: 'An error occurred'
+        }]
+      }).catch(() => {});
     }
   }
 };
-
-export default button;

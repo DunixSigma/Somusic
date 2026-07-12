@@ -1,10 +1,9 @@
-import { ButtonBuilder, ButtonStyle, ActionRowBuilder } from 'discord.js';
 import Logger from '../logs/Logger.js';
 
-const logger = new Logger('PlayButton');
+const logger = new Logger('PreviousButton');
 
 export default {
-  id: 'btn_play',
+  id: 'btn_previous',
   async execute(interaction, client) {
     try {
       await interaction.deferReply({ ephemeral: true });
@@ -16,22 +15,22 @@ export default {
           embeds: [{
             color: 0xff0000,
             title: '❌ Error',
-            description: 'You must be in a voice channel to play music'
+            description: 'You must be in a voice channel'
           }]
         });
       }
 
-      logger.info(`Play button pressed by ${interaction.user.username}`);
+      logger.info(`Previous button pressed by ${interaction.user.username}`);
 
       await interaction.editReply({
         embeds: [{
           color: 0x00ff00,
-          title: '▶️ Resume',
-          description: 'Music resumed'
+          title: '⏮️ Previous',
+          description: 'Playing previous song'
         }]
       });
     } catch (error) {
-      logger.error(`Error in play button: ${error.message}`);
+      logger.error(`Error in previous button: ${error.message}`);
       await interaction.editReply({
         embeds: [{
           color: 0xff0000,

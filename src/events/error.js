@@ -1,11 +1,11 @@
-import { Events } from 'discord.js';
-import { logger } from '../logs/logger.js';
+import Logger from '../logs/Logger.js';
 
-const event = {
-  name: Events.Error,
+const logger = new Logger('ClientError');
+
+export default {
+  name: 'error',
   async execute(error) {
-    logger.error('Erro do Discord Client:', error);
-  },
+    logger.error(`Client error: ${error.message}`);
+    logger.error(`Stack: ${error.stack}`);
+  }
 };
-
-export default event;

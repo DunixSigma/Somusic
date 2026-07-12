@@ -1,59 +1,74 @@
-import { Events } from 'discord.js';
-import { logger } from '../logs/logger.js';
+import Logger from '../logs/Logger.js';
+import { PermissionFlagsBits } from 'discord.js';
 
-const event = {
-  name: Events.InteractionCreate,
-  async execute(interaction, client) {
-    if (!interaction.guild) return;
+const logger = new Logger('InteractionCreate');
 
-    // Pegar collections do client
-    const { commands, buttons, modals, selectMenus } = client;
+export default {
+  name: 'interactionCreate',
+  async execute(client, interaction) {
+    try {
+      if (interaction.isChatInputCommand()) {
+        const command = client.handlers.commandHandler.getCommand(interaction.commandName);
+        
+        if (!command) {
+          return logger.warn(`Command ${interaction.commandName} not found`);
+        }
 
-    if (interaction.isChatInputCommand()) {
-      const command = commands.get(interaction.commandName);
-      if (!command) return logger.warn(`Comando nao encontrado: ${interaction.commandName}`);
-
-      try {
         await command.execute(interaction, client);
-      } catch (error) {
-        logger.error(`Erro ao executar ${interaction.commandName}:`, error);
-        await interaction.reply({ content: 'Erro ao executar comando!', ephemeral: true }).catch(() => {});
-      }
-    }
+      } 
+      else if (interaction.isButton()) {
+        const button = client.handlers.buttonHandler.getButton(interaction.customId);
+        
+        if (!button) {
+          return logger.warn(`Button ${interaction.customId} not found`);
+        }
 
-    if (interaction.isButton()) {
-      const button = buttons.get(interaction.customId);
-      if (!button) return;
-
-      try {
         await button.execute(interaction, client);
-      } catch (error) {
-        logger.error(`Erro no botao ${interaction.customId}:`, error);
-      }
-    }
+      } 
+      else if (interaction.isModalSubmit()) {
+        const modal = client.handlers.modalHandler.getModal(interaction.customId);
+        
+        if (!modal) {
+          return logger.warn(`Modal ${interaction.customId} not found`);
+        }
 
-    if (interaction.isModalSubmit()) {
-      const modal = modals.get(interaction.customId);
-      if (!modal) return;
-
-      try {
         await modal.execute(interaction, client);
-      } catch (error) {
-        logger.error(`Erro no modal ${interaction.customId}:`, error);
-      }
-    }
+      } 
+      else if (interaction.isStringSelectMenu()) {
+        const menu = client.handlers.selectMenuHandler.getMenu(interaction.customId);
+        
+        if (!menu) {
+          return logger.warn(`Select menu ${interaction.customId} not found`);
+        }
 
-    if (interaction.isStringSelectMenu() || interaction.isChannelSelectMenu()) {
-      const menu = selectMenus.get(interaction.customId);
-      if (!menu) return;
-
-      try {
         await menu.execute(interaction, client);
-      } catch (error) {
-        logger.error(`Erro no menu ${interaction.customId}:`, error);
+      }
+    } catch (error) {
+      logger.error(`Error in interaction: ${error.message}`);
+      
+      try {
+        if (interaction.replied || interaction.deferred) {
+          await interaction.followUp({
+            embeds: [{
+              color: 0xff0000,
+              title: '❌ Error',
+              description: 'An error occurred while processing your request'
+            }],
+            ephemeral: true
+          });
+        } else {
+          await interaction.reply({
+            embeds: [{
+              color: 0xff0000,
+              title: '❌ Error',
+              description: 'An error occurred while processing your request'
+            }],
+            ephemeral: true
+          });
+        }
+      } catch (replyError) {
+        logger.error(`Failed to send error message: ${replyError.message}`);
       }
     }
-  },
+  }
 };
-
-export default event;

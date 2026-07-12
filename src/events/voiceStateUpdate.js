@@ -1,22 +1,44 @@
-import { Events } from 'discord.js';
-import { logger } from '../logs/logger.js';
-import { destroyPlayer } from '../music/player.js';
-import { deleteQueue } from '../music/queue.js';
+import Logger from '../logs/Logger.js';
 
-const event = {
-  name: Events.VoiceStateUpdate,
-  async execute(oldState, newState) {
+const logger = new Logger('VoiceStateUpdate');
+
+export default {
+  name: 'voiceStateUpdate',
+  async execute(client, oldState, newState) {
     try {
-      // Se o bot foi desconectado
-      if (oldState.member?.id === oldState.client.user.id && oldState.channelId && !newState.channelId) {
-        destroyPlayer(oldState.guild.id);
-        deleteQueue(oldState.guild.id);
-        logger.music(`Bot desconectado do servidor ${oldState.guild.id}`);
+      // Bot deixou um canal de voz
+      if (oldState.member?.id === client.user.id && !newState.channel) {
+        logger.info(`Bot left voice channel in guild ${oldState.guild.id}`);
+        
+        if (client.musicManager && client.musicManager.hasPlayer(oldState.guild.id)) {
+          client.musicManager.deletePlayer(oldState.guild.id);
+        }
+      }
+      
+      // Usuário deixou o canal onde o bot está
+      if (oldState.channel && !newState.channel && oldState.member?.id !== client.user.id) {
+        const voiceChannel = oldState.channel;
+        const botMember = voiceChannel.members.find(m => m.id === client.user.id);
+        
+        // Se o bot está sozinho no canal
+        if (botMember && voiceChannel.members.size === 1) {
+          logger.info(`Bot is alone in voice channel ${voiceChannel.id}, preparing to leave`);
+          
+          // Aguardar um pouco antes de sair
+          setTimeout(async () => {
+            if (voiceChannel.members.size === 1) {
+              try {
+                await botMember.voice.disconnect();
+                logger.info(`Bot left empty voice channel`);
+              } catch (error) {
+                logger.error(`Failed to disconnect bot: ${error.message}`);
+              }
+            }
+          }, 60000); // 1 minuto
+        }
       }
     } catch (error) {
-      logger.error('Erro ao processar mudança de voz:', error);
+      logger.error(`Error in voiceStateUpdate: ${error.message}`);
     }
-  },
+  }
 };
-
-export default event;

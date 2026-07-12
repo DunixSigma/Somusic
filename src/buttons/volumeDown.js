@@ -1,24 +1,24 @@
 import Logger from '../logs/Logger.js';
 
-const logger = new Logger('LoopButton');
+const logger = new Logger('VolumeDownButton');
 
 export default {
-  id: 'btn_loop',
+  id: 'btn_volume_down',
   async execute(interaction, client) {
     try {
       await interaction.deferReply({ ephemeral: true });
 
-      logger.info(`Loop button pressed by ${interaction.user.username}`);
+      logger.info(`Volume down button pressed by ${interaction.user.username}`);
 
       await interaction.editReply({
         embeds: [{
           color: 0x00ff00,
-          title: '🔁 Loop',
-          description: 'Loop mode changed'
+          title: '🔉 Volume -',
+          description: 'Volume decreased'
         }]
       });
     } catch (error) {
-      logger.error(`Error in loop button: ${error.message}`);
+      logger.error(`Error in volume down button: ${error.message}`);
       await interaction.editReply({
         embeds: [{
           color: 0xff0000,

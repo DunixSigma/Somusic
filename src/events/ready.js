@@ -1,21 +1,14 @@
-import { Events } from 'discord.js';
-import { logger } from '../logs/logger.js';
-import { initializeKazagumo } from '../music/player.js';
+import Logger from '../logs/Logger.js';
 
-const event = {
-  name: Events.ClientReady,
+const logger = new Logger('Ready');
+
+export default {
+  name: 'ready',
   once: true,
   async execute(client) {
-    logger.success(`Bot conectado como ${client.user.tag}`);
-    logger.success(`Bot está em ${client.guilds.cache.size} servidor(es)`);
+    logger.success(`Bot logged in as ${client.user.tag}`);
+    logger.info(`Serving ${client.guilds.cache.size} guilds`);
     
-    await initializeKazagumo(client);
-    
-    client.user.setPresence({
-      activities: [{ name: '🎵 Música | /help', type: 'PLAYING' }],
-      status: 'online',
-    });
-  },
+    client.user.setActivity('🎵 Music', { type: 'LISTENING' });
+  }
 };
-
-export default event;
