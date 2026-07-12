@@ -2,130 +2,170 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { logger } from '../logs/logger.js';
+import config from '../../config.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-export const loadEvents = async (client) => {
-  const eventsPath = path.join(__dirname, '../events');
-  const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
-
-  for (const file of eventFiles) {
-    try {
-      const filePath = path.join(eventsPath, file);
-      const { default: event } = await import(`file://${filePath}`);
-
-      if (event.name && typeof event.execute === 'function') {
-        client.on(event.name, (...args) => event.execute(...args, client));
-        logger.success(`Evento carregado: ${event.name}`);
-      }
-    } catch (error) {
-      logger.error(`Erro ao carregar evento ${file}:`, error);
-    }
-  }
-};
-
+/**
+ * Carregar comandos do diretório
+ */
 export const loadCommands = async () => {
-  const commands = new Map();
-  const commandsPath = path.join(__dirname, '../commands');
-  const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+  const { Collection } = await import('discord.js');
+  const commands = new Collection();
+  const commandsPath = config.paths.commands;
 
-  for (const file of commandFiles) {
-    try {
-      const filePath = path.join(commandsPath, file);
-      const { default: command } = await import(`file://${filePath}`);
+  try {
+    // Ler todas as subpastas
+    const folders = fs.readdirSync(commandsPath).filter(file => 
+      fs.statSync(path.join(commandsPath, file)).isDirectory()
+    );
 
-      if (command.data && typeof command.execute === 'function') {
-        commands.set(command.data.name, command);
-        logger.success(`Comando carregado: ${command.data.name}`);
+    for (const folder of folders) {
+      const files = fs.readdirSync(path.join(commandsPath, folder)).filter(file => file.endsWith('.js'));
+      
+      for (const file of files) {
+        const filePath = path.join(commandsPath, folder, file);
+        try {
+          const { default: command } = await import(`file://${filePath}`);
+          if (command.data && command.execute) {
+            commands.set(command.data.name, command);
+            logger.command(`Comando carregado: ${command.data.name}`);
+          }
+        } catch (error) {
+          logger.error(`Erro ao carregar comando ${file}:`, error);
+        }
       }
-    } catch (error) {
-      logger.error(`Erro ao carregar comando ${file}:`, error);
     }
+  } catch (error) {
+    logger.error('Erro ao carregar comandos:', error);
   }
 
   return commands;
 };
 
+/**
+ * Carregar botões do diretório
+ */
 export const loadButtons = async () => {
-  const buttons = new Map();
-  const buttonsPath = path.join(__dirname, '../buttons');
-  
-  if (!fs.existsSync(buttonsPath)) {
-    fs.mkdirSync(buttonsPath, { recursive: true });
-    return buttons;
-  }
+  const { Collection } = await import('discord.js');
+  const buttons = new Collection();
+  const buttonsPath = config.paths.buttons;
 
-  const buttonFiles = fs.readdirSync(buttonsPath).filter(file => file.endsWith('.js'));
+  try {
+    const files = fs.readdirSync(buttonsPath).filter(file => file.endsWith('.js'));
 
-  for (const file of buttonFiles) {
-    try {
+    for (const file of files) {
       const filePath = path.join(buttonsPath, file);
-      const { default: button } = await import(`file://${filePath}`);
-
-      if (button.customId && typeof button.execute === 'function') {
-        buttons.set(button.customId, button);
-        logger.success(`Botão carregado: ${button.customId}`);
+      try {
+        const { default: button } = await import(`file://${filePath}`);
+        if (button.customId && button.execute) {
+          buttons.set(button.customId, button);
+          logger.command(`Botão carregado: ${button.customId}`);
+        }
+      } catch (error) {
+        logger.error(`Erro ao carregar botão ${file}:`, error);
       }
-    } catch (error) {
-      logger.error(`Erro ao carregar botão ${file}:`, error);
     }
+  } catch (error) {
+    logger.error('Erro ao carregar botões:', error);
   }
 
   return buttons;
 };
 
+/**
+ * Carregar modals do diretório
+ */
 export const loadModals = async () => {
-  const modals = new Map();
-  const modalsPath = path.join(__dirname, '../modals');
-  
-  if (!fs.existsSync(modalsPath)) {
-    fs.mkdirSync(modalsPath, { recursive: true });
-    return modals;
-  }
+  const { Collection } = await import('discord.js');
+  const modals = new Collection();
+  const modalsPath = config.paths.modals;
 
-  const modalFiles = fs.readdirSync(modalsPath).filter(file => file.endsWith('.js'));
+  try {
+    const files = fs.readdirSync(modalsPath).filter(file => file.endsWith('.js'));
 
-  for (const file of modalFiles) {
-    try {
+    for (const file of files) {
       const filePath = path.join(modalsPath, file);
-      const { default: modal } = await import(`file://${filePath}`);
-
-      if (modal.customId && typeof modal.execute === 'function') {
-        modals.set(modal.customId, modal);
-        logger.success(`Modal carregado: ${modal.customId}`);
+      try {
+        const { default: modal } = await import(`file://${filePath}`);
+        if (modal.customId && modal.execute) {
+          modals.set(modal.customId, modal);
+          logger.command(`Modal carregado: ${modal.customId}`);
+        }
+      } catch (error) {
+        logger.error(`Erro ao carregar modal ${file}:`, error);
       }
-    } catch (error) {
-      logger.error(`Erro ao carregar modal ${file}:`, error);
     }
+  } catch (error) {
+    logger.error('Erro ao carregar modals:', error);
   }
 
   return modals;
 };
 
+/**
+ * Carregar select menus do diretório
+ */
 export const loadSelectMenus = async () => {
-  const menus = new Map();
-  const menusPath = path.join(__dirname, '../selectMenus');
-  
-  if (!fs.existsSync(menusPath)) {
-    fs.mkdirSync(menusPath, { recursive: true });
-    return menus;
-  }
+  const { Collection } = await import('discord.js');
+  const selectMenus = new Collection();
+  const selectMenusPath = config.paths.selectMenus;
 
-  const menuFiles = fs.readdirSync(menusPath).filter(file => file.endsWith('.js'));
+  try {
+    const files = fs.readdirSync(selectMenusPath).filter(file => file.endsWith('.js'));
 
-  for (const file of menuFiles) {
-    try {
-      const filePath = path.join(menusPath, file);
-      const { default: menu } = await import(`file://${filePath}`);
-
-      if (menu.customId && typeof menu.execute === 'function') {
-        menus.set(menu.customId, menu);
-        logger.success(`Menu carregado: ${menu.customId}`);
+    for (const file of files) {
+      const filePath = path.join(selectMenusPath, file);
+      try {
+        const { default: selectMenu } = await import(`file://${filePath}`);
+        if (selectMenu.customId && selectMenu.execute) {
+          selectMenus.set(selectMenu.customId, selectMenu);
+          logger.command(`Select Menu carregado: ${selectMenu.customId}`);
+        }
+      } catch (error) {
+        logger.error(`Erro ao carregar select menu ${file}:`, error);
       }
-    } catch (error) {
-      logger.error(`Erro ao carregar menu ${file}:`, error);
     }
+  } catch (error) {
+    logger.error('Erro ao carregar select menus:', error);
   }
 
-  return menus;
+  return selectMenus;
+};
+
+/**
+ * Carregar eventos do diretório
+ */
+export const loadEvents = async (client) => {
+  const eventsPath = path.join(config.paths.events);
+
+  try {
+    const folders = fs.readdirSync(eventsPath).filter(file => 
+      fs.statSync(path.join(eventsPath, file)).isDirectory()
+    );
+
+    for (const folder of folders) {
+      const files = fs.readdirSync(path.join(eventsPath, folder)).filter(file => file.endsWith('.js'));
+      
+      for (const file of files) {
+        const filePath = path.join(eventsPath, folder, file);
+        try {
+          const { default: event } = await import(`file://${filePath}`);
+          if (event.name && event.execute) {
+            if (event.once) {
+              client.once(event.name, (...args) => event.execute(...args, client));
+            } else {
+              client.on(event.name, (...args) => event.execute(...args, client));
+            }
+            logger.event(`Evento carregado: ${event.name}`);
+          }
+        } catch (error) {
+          logger.error(`Erro ao carregar evento ${file}:`, error);
+        }
+      }
+    }
+  } catch (error) {
+    logger.error('Erro ao carregar eventos:', error);
+  }
 };
