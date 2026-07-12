@@ -1,0 +1,37 @@
+{
+  "name": "somusic",
+  "version": "1.0.0",
+  "description": "Professional Discord Music Bot",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "discord",
+    "music",
+    "bot",
+    "lavalink",
+    "kazagumo"
+  ],
+  "author": "DunixSigma",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "kazagumo": "^3.2.1",
+    "shoukaku": "^6.6.0",
+    "dotenv": "^16.3.1",
+    "sqlite3": "^5.1.6",
+    "sqlite": "^5.0.1",
+    "spotify-url-info": "^2.2.7",
+    "axios": "^1.6.2",
+    "moment": "^2.29.4",
+    "chalk": "^5.3.0"
+  },
+  "devDependencies": {}
+}
