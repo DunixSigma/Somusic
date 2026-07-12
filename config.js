@@ -1,25 +1,25 @@
-import 'dotenv/config.js';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+dotenv.config();
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const config = {
   bot: {
     token: process.env.DISCORD_TOKEN,
-    clientId: process.env.DISCORD_CLIENT_ID,
-    prefix: process.env.BOT_PREFIX || '!',
-    language: process.env.BOT_LANGUAGE || 'pt',
+    clientId: process.env.CLIENT_ID,
+    prefix: process.env.PREFIX || '!',
   },
   lavalink: {
     host: process.env.LAVALINK_HOST || 'localhost',
-    port: parseInt(process.env.LAVALINK_PORT) || 2333,
+    port: process.env.LAVALINK_PORT || 2333,
     password: process.env.LAVALINK_PASSWORD || 'youshallnotpass',
-    secure: false,
+    secure: process.env.LAVALINK_SECURE === 'true',
   },
   database: {
-    path: process.env.DATABASE_PATH || './data/database.sqlite',
+    path: path.join(__dirname, '../data/somusic.db'),
   },
-  spotify: {
-    clientId: process.env.SPOTIFY_CLIENT_ID || '',
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET || '',
-  },
-  env: process.env.NODE_ENV || 'development',
   debug: process.env.DEBUG === 'true',
 };

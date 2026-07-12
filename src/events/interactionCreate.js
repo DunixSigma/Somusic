@@ -1,60 +1,57 @@
 import { Events } from 'discord.js';
 import { logger } from '../logs/logger.js';
-import { handleError } from '../utils/validators.js';
 
 const event = {
   name: Events.InteractionCreate,
-  async execute(interaction, client, commands, buttons, modals, selectMenus) {
-    try {
-      if (interaction.isChatInputCommand()) {
-        const command = commands.get(interaction.commandName);
-        if (!command) return;
+  async execute(interaction, client) {
+    if (!interaction.guild) return;
 
-        try {
-          await command.execute(interaction, client);
-        } catch (error) {
-          logger.error(`Erro ao executar comando ${interaction.commandName}:`, error);
-          await handleError(interaction, error);
-        }
+    // Pegar collections do client
+    const { commands, buttons, modals, selectMenus } = client;
+
+    if (interaction.isChatInputCommand()) {
+      const command = commands.get(interaction.commandName);
+      if (!command) return logger.warn(`Comando nao encontrado: ${interaction.commandName}`);
+
+      try {
+        await command.execute(interaction, client);
+      } catch (error) {
+        logger.error(`Erro ao executar ${interaction.commandName}:`, error);
+        await interaction.reply({ content: 'Erro ao executar comando!', ephemeral: true }).catch(() => {});
       }
+    }
 
-      if (interaction.isButton()) {
-        const button = buttons.get(interaction.customId);
-        if (!button) return;
+    if (interaction.isButton()) {
+      const button = buttons.get(interaction.customId);
+      if (!button) return;
 
-        try {
-          await button.execute(interaction, client);
-        } catch (error) {
-          logger.error(`Erro ao executar botão ${interaction.customId}:`, error);
-          await handleError(interaction, error);
-        }
+      try {
+        await button.execute(interaction, client);
+      } catch (error) {
+        logger.error(`Erro no botao ${interaction.customId}:`, error);
       }
+    }
 
-      if (interaction.isModalSubmit()) {
-        const modal = modals.get(interaction.customId);
-        if (!modal) return;
+    if (interaction.isModalSubmit()) {
+      const modal = modals.get(interaction.customId);
+      if (!modal) return;
 
-        try {
-          await modal.execute(interaction, client);
-        } catch (error) {
-          logger.error(`Erro ao executar modal ${interaction.customId}:`, error);
-          await handleError(interaction, error);
-        }
+      try {
+        await modal.execute(interaction, client);
+      } catch (error) {
+        logger.error(`Erro no modal ${interaction.customId}:`, error);
       }
+    }
 
-      if (interaction.isStringSelectMenu() || interaction.isChannelSelectMenu()) {
-        const menu = selectMenus.get(interaction.customId);
-        if (!menu) return;
+    if (interaction.isStringSelectMenu() || interaction.isChannelSelectMenu()) {
+      const menu = selectMenus.get(interaction.customId);
+      if (!menu) return;
 
-        try {
-          await menu.execute(interaction, client);
-        } catch (error) {
-          logger.error(`Erro ao executar menu ${interaction.customId}:`, error);
-          await handleError(interaction, error);
-        }
+      try {
+        await menu.execute(interaction, client);
+      } catch (error) {
+        logger.error(`Erro no menu ${interaction.customId}:`, error);
       }
-    } catch (error) {
-      logger.error('Erro ao processar interação:', error);
     }
   },
 };
