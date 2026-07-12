@@ -1,203 +1,170 @@
-# 🎵 Somusic - Professional Discord Music Bot
+# Somusic - Discord Music Bot
 
-Um bot de música profissional para Discord, desenvolvido com Node.js, discord.js v14, Kazagumo, Shoukaku e Lavalink.
+Um bot de musica poderoso para Discord construido com Discord.js e Kazagumo.
 
-## 🚀 Características
+## Recursos
 
-### Sistema de Música
-- ✅ Pesquisa por YouTube
-- ✅ Pesquisa por Spotify (conversão automática para YouTube)
-- ✅ Pesquisa por SoundCloud
-- ✅ Suporte a Playlists
-- ✅ Sistema de Fila (Queue)
-- ✅ Comando Previous
-- ✅ Replay de músicas
-- ✅ Remoção de músicas
-- ✅ Mover músicas na fila
-- ✅ Limpar fila
-- ✅ Shuffle
-- ✅ Loop (Track/Fila)
-- ✅ Autoplay
-- ✅ Controle de Volume
-- ✅ Seek (Avançar/Retroceder)
-- ✅ Now Playing
-- ✅ Letras de músicas
-- ✅ Histórico de reprodução
-- ✅ Favoritos
-- ✅ Playlists privadas
-- ✅ Sistema DJ
-- ✅ Sistema de permissões
-
-### Interface
-- 🎨 Dashboard moderno e em tempo real
-- 🎛️ Painel permanente configurável
-- 🎵 Controles interativos com botões
-- 📊 Capa da música, progresso, volume
-- ⌚ Status do Lavalink em tempo real
-
-### Funcionalidades Adicionais
-- 📝 Sistema de logs completo
+- 🎵 Reproducao de musica de alta qualidade
+- 📝 Sistema de fila completo
+- ❤️ Sistema de favoritos
+- 📋 Gerenciamento de playlists
+- 🔊 Controle de volume
+- 🔁 Modos de loop
+- 🎚️ Filtros de audio avancados
+- 📚 Historico de musicas tocadas
+- 🎤 Suporte a YouTube, Spotify e SoundCloud
 - 💾 Banco de dados SQLite
-- 🔧 Tratamento de erros robusto
-- 📦 Código totalmente modular
-- 🎯 Comandos Slash modernos
-- 🔐 Sistema de permissões
-- 🌍 Suporte multi-idioma (Português)
+- 📊 Painel permanente de controle
 
-## 📋 Pré-requisitos
+## Requisitos
 
-- Node.js 20.0.0 ou superior
-- npm ou yarn
-- Lavalink configurado e rodando
-- Bot Token do Discord
-- Client ID do Discord
+- Node.js 18.0.0 ou superior
+- Lavalink server (para reproducao de musica)
+- Discord Bot Token
+- SQLite3
 
-## 📥 Instalação
+## Instalacao
 
-### 1. Clonar o Repositório
+1. Clone o repositorio:
 ```bash
 git clone https://github.com/DunixSigma/Somusic.git
 cd Somusic
 ```
 
-### 2. Instalar Dependências
+2. Instale as dependencias:
 ```bash
 npm install
 ```
 
-### 3. Configurar Variáveis de Ambiente
+3. Configure o arquivo `.env`:
 ```bash
 cp .env.example .env
 ```
 
-Edite o arquivo `.env` com suas credenciais:
-```env
-DISCORD_TOKEN=seu_token_aqui
-DISCORD_CLIENT_ID=seu_client_id_aqui
-LAVALINK_HOST=localhost
-LAVALINK_PORT=2333
-LAVALINK_PASSWORD=youshallnotpass
-```
+4. Edite o `.env` com suas configuracoes
 
-### 4. Executar o Bot
+5. Inicie o bot:
 ```bash
 npm start
 ```
 
-Para desenvolvimento com auto-reload:
+## Configuracao do Lavalink
+
+### Docker
+
 ```bash
-npm run dev
+docker run -d -p 2333:2333 --name lavalink fredboat/lavalink
 ```
 
-## 🛠️ Estrutura de Pastas
+### Manual
+
+Baixe em: https://github.com/lavalink-devs/Lavalink/releases
+
+## Configuracoes do Bot
+
+1. Acesse: https://discord.com/developers/applications
+2. Crie uma nova aplicacao
+3. Na secao "Bot", copie o token
+4. Em "OAuth2" > "URL Generator", selecione:
+   - Scopes: `bot`, `applications.commands`
+   - Permissions: `Administrator` (ou permissoes especificas)
+5. Use a URL gerada para adicionar o bot ao seu servidor
+
+## Comandos
+
+### Musica
+- `/play <musica>` - Toca uma musica
+- `/pause` - Pausa a musica
+- `/resume` - Retoma a musica
+- `/skip` - Pula para a proxima
+- `/stop` - Para a reproducao
+- `/queue [pagina]` - Mostra a fila
+- `/nowplaying` - Musica atual
+- `/seek <segundos>` - Avanca/retrocede
+
+### Controle
+- `/volume <nivel>` - Altera volume (0-100)
+- `/loop <tipo>` - Loop (off/track/queue)
+- `/shuffle` - Embaralha a fila
+- `/remove <posicao>` - Remove da fila
+- `/move <de> <para>` - Move na fila
+- `/clearqueue` - Limpa a fila
+
+### Sistema
+- `/favorite` - Adiciona aos favoritos
+- `/history` - Seu historico
+- `/playlist` - Gerencia playlists
+- `/lyrics` - Letras da musica
+- `/filter <tipo>` - Aplica filtros
+- `/setup` - Configura painel permanente
+- `/help` - Ajuda
+
+## Estrutura do Projeto
 
 ```
 Somusic/
 ├── src/
-│   ├── index.js                 # Arquivo principal
-│   ├── commands/               # Comandos Slash
-│   ├── events/                 # Eventos Discord
-│   ├── handlers/               # Gerenciadores
-│   ├── buttons/                # Handlers de botões
-│   ├── modals/                 # Handlers de modais
-│   ├── selectMenus/            # Handlers de menus de seleção
-│   ├── music/                  # Sistema de música
-│   ├── database/               # Gerenciador de banco de dados
-│   ├── utils/                  # Funções utilitárias
-│   ├── types/                  # Definições de tipos
-│   ├── assets/                 # Recursos (imagens, ícones)
-│   └── logs/                   # Sistema de logs
-├── data/
-│   └── database.sqlite        # Banco de dados
-├── logs/                       # Arquivos de log
-├── config.js                   # Configurações
-├── .env                        # Variáveis de ambiente
-├── .env.example               # Exemplo de variáveis
-├── .gitignore                 # Git ignore
-├── package.json               # Dependências
-└── README.md                  # Este arquivo
+│   ├── commands/          # Comandos slash
+│   ├── events/            # Eventos do bot
+│   ├── buttons/           # Manipuladores de botoes
+│   ├── modals/            # Manipuladores de modals
+│   ├── selectMenus/       # Manipuladores de menus
+│   ├── database/          # Sistema de banco de dados
+│   ├── music/             # Sistema de musica
+│   ├── utils/             # Funcoes utilitarias
+│   ├── logs/              # Sistema de logs
+│   ├── handlers/          # Handlers e carregadores
+│   └── index.js           # Arquivo principal
+├── data/                  # Dados do banco de dados
+├── logs/                  # Arquivos de log
+├── config.js              # Configuracoes
+├── package.json           # Dependencias
+└── .env                   # Variaveis de ambiente
 ```
 
-## ⚙️ Configuração do Lavalink
+## Variaveis de Ambiente
 
-### Docker Compose (Recomendado)
+```env
+# Discord
+DISCORD_TOKEN=seu_token_aqui
+CLIENT_ID=seu_client_id_aqui
+PREFIX=!
 
-Crie um arquivo `docker-compose.yml`:
+# Lavalink
+LAVALINK_HOST=localhost
+LAVALINK_PORT=2333
+LAVALINK_PASSWORD=youshallnotpass
+LAVALINK_SECURE=false
 
-```yaml
-version: '3.8'
-
-services:
-  lavalink:
-    image: lavalibs/lavalink:latest
-    container_name: lavalink
-    environment:
-      - _JAVA_OPTIONS=-Xmx6G
-    ports:
-      - "2333:2333"
-    volumes:
-      - ./application.yml:/opt/Lavalink/application.yml
-    restart: unless-stopped
+# Debug
+DEBUG=false
 ```
 
-E um arquivo `application.yml` com configurações do Lavalink.
+## Dependencias
 
-## 🎮 Uso do Bot
+- discord.js
+- kazagumo
+- shoukaku
+- axios
+- dotenv
+- chalk
+- moment
+- sqlite3
 
-### Setup do Painel
+## Licenca
 
-```
-/setup
-```
+MIT License - Veja LICENSE para detalhes
 
-Configura o painel permanente de música em um canal à sua escolha.
+## Suporte
 
-### Comandos de Música
+Para suporte, abra uma issue no GitHub ou entre em contato
 
-- `/play [música]` - Toca uma música
-- `/pause` - Pausa a reprodução
-- `/resume` - Retoma a reprodução
-- `/skip` - Pula para a próxima música
-- `/stop` - Para a reprodução
-- `/queue` - Mostra a fila
-- `/loop [type]` - Ativa loop (track/queue/off)
-- `/shuffle` - Embaralha a fila
-- `/volume [número]` - Altera o volume (0-100)
-- `/nowplaying` - Mostra a música atual
-- `/lyrics` - Mostra as letras
-- `/history` - Mostra histórico
-- `/favorite` - Adiciona aos favoritos
-- `/playlist` - Gerencia playlists
+## Autores
 
-## 🔐 Permissões Necessárias
+- DunixSigma
 
-O bot necessita das seguintes permissões:
+## Agradecimentos
 
-- Conectar
-- Falar
-- Gerenciar Mensagens
-- Incorporar Links
-- Adicionar Reações
-
-## 📝 Logs
-
-Os logs são salvos em `logs/` com formato:
-- `logs/info.log` - Informações gerais
-- `logs/error.log` - Erros
-- `logs/music.log` - Eventos de música
-
-## 🤝 Suporte
-
-Para reportar bugs ou solicitar funcionalidades, abra uma issue no repositório.
-
-## 📄 Licença
-
-MIT - Veja o arquivo LICENSE para detalhes.
-
-## 👨‍💻 Autor
-
-**DunixSigma** - [GitHub](https://github.com/DunixSigma)
-
----
-
-**Desenvolvido com ❤️ para a comunidade Discord**
+- Discord.js
+- Kazagumo
+- Lavalink
