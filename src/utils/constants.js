@@ -1,61 +1,34 @@
-export const COLORS = {
-  SUCCESS: 0x00FF00,
-  ERROR: 0xFF0000,
-  WARNING: 0xFFFF00,
-  INFO: 0x0099FF,
-  MUSIC: 0xFF00FF,
-  NEUTRAL: 0x808080
-};
-
 export const EMOJIS = {
+  MUSIC: '🎵',
   PLAY: '▶️',
   PAUSE: '⏸️',
-  STOP: '⏹️',
   SKIP: '⏭️',
-  PREVIOUS: '⏮️',
-  SHUFFLE: '🔀',
+  STOP: '⏹️',
+  QUEUE: '📋',
+  VOLUME: '🔊',
   LOOP: '🔁',
+  SHUFFLE: '🔀',
   FAVORITE: '❤️',
-  VOLUME_UP: '🔊',
-  VOLUME_DOWN: '🔉',
-  QUEUE: '📜',
-  SEARCH: '🔍',
-  MUSIC: '🎵',
-  PLAYLIST: '🎼',
   HISTORY: '📜',
-  FILTER: '🎛️',
-  SUCCESS: '✅',
   ERROR: '❌',
+  SUCCESS: '✅',
+  INFO: 'ℹ️',
   WARNING: '⚠️',
-  LOADING: '⏳'
 };
 
 export const MESSAGES = {
-  NOT_IN_VOICE: 'Você precisa estar em um canal de voz!',
-  BOT_NOT_IN_VOICE: 'Eu não estou em um canal de voz!',
-  SAME_VOICE: 'Você precisa estar no mesmo canal de voz que eu!',
-  NO_PERMISSION: 'Você não tem permissão para fazer isso!',
-  BOT_NO_PERMISSION: 'Eu não tenho permissão para fazer isso!',
-  NO_TRACK_PLAYING: 'Nenhuma música está tocando no momento!',
-  QUEUE_EMPTY: 'A fila está vazia!',
-  INVALID_URL: 'URL inválida!',
-  SEARCH_NO_RESULTS: 'Nenhum resultado encontrado!',
-  ERROR_OCCURRED: 'Ocorreu um erro ao processar seu pedido!',
+  NOT_IN_VOICE: 'Voce nao esta em um canal de voz!',
+  BOT_NOT_IN_VOICE: 'O bot nao esta em um canal de voz!',
+  NO_TRACK_PLAYING: 'Nenhuma musica esta tocando!',
+  NOT_SAME_VOICE: 'Voce nao esta no mesmo canal de voz que o bot!',
+  ERROR_OCCURRED: 'Ocorreu um erro ao processar o comando!',
+  NO_PERMISSION: 'Voce nao tem permissao para usar este comando!',
 };
 
-export const LOOP_MODES = {
-  OFF: 'off',
-  TRACK: 'track',
-  QUEUE: 'queue'
+export const COLORS = {
+  PRIMARY: 0x5865F2,
+  SUCCESS: 0x57F287,
+  ERROR: 0xED4245,
+  WARNING: 0xFAA61A,
+  MUSIC: 0x00FF00,
 };
-
-export const FILTERS = [
-  'bassboost',
-  'nightcore',
-  'vaporwave',
-  'pop',
-  'phonk',
-  'treble',
-  'vibrato',
-  'tremolo'
-];
