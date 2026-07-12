@@ -1,42 +1,49 @@
 import { SlashCommandBuilder } from 'discord.js';
-import { logger } from '../logs/logger.js';
+import Logger from '../logs/Logger.js';
 
-const command = {
+const logger = new Logger('HelpCommand');
+
+export default {
   data: new SlashCommandBuilder()
     .setName('help')
-    .setDescription('Mostra ajuda dos comandos'),
-  
+    .setDescription('Show available commands'),
   async execute(interaction) {
     try {
-      const help = `
-**Comandos de Musica:**
-/play - Toca uma musica
-/pause - Pausa a musica
-/resume - Retoma a musica
-/skip - Pula para proxima
-/stop - Para a reproducao
-/queue - Mostra a fila
-/volume - Altera volume
-/loop - Ativa loop
-/shuffle - Embaralha fila
-/seek - Avanca/retrocede
-/nowplaying - Musica atual
-/lyrics - Letras da musica
-/favorite - Favoritos
-/history - Historico
-/playlist - Gerencia playlists
-/remove - Remove da fila
-/move - Move na fila
-/clearqueue - Limpa fila
-/filter - Aplica filtros
-/setup - Configura painel
-      `;
-      await interaction.reply({ content: help, ephemeral: true });
-      logger.music('Help');
+      await interaction.deferReply();
+
+      logger.info(`Help request from ${interaction.user.username}`);
+
+      const commands = [
+        '**Music Commands:**',
+        '/play - Play a song',
+        '/skip - Skip to next song',
+        '/pause - Pause the music',
+        '/resume - Resume the music',
+        '/stop - Stop the music',
+        '/queue - Show queue',
+        '/nowplaying - Show current song',
+        '/volume - Set volume',
+        '/loop - Set loop mode',
+        '/shuffle - Shuffle queue',
+        '/help - Show this message'
+      ].join('\n');
+
+      await interaction.editReply({
+        embeds: [{
+          color: 0x0099ff,
+          title: '📚 Help',
+          description: commands
+        }]
+      });
     } catch (error) {
-      logger.error('Erro em help:', error);
+      logger.error(`Error in help command: ${error.message}`);
+      await interaction.editReply({
+        embeds: [{
+          color: 0xff0000,
+          title: '❌ Error',
+          description: 'An error occurred while executing the command'
+        }]
+      }).catch(() => {});
     }
   }
 };
-
-export default command;
